@@ -2,7 +2,7 @@ const request = require('supertest');
 const { expect } = require('chai');
 
 describe('Login', () => {
-    describe('POST', () => {
+    describe('POST /login', () => {
         it('Must return 200 with a string token with valid credentials', async () =>{
             const response = await request('http://localhost:3000')
                 .post('/login') //Endpoint method called
