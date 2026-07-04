@@ -1,11 +1,12 @@
 const request = require('supertest');
 const { expect } = require('chai');
+require ('dotenv').config();
 
 describe('Transferencias', () =>{
     describe('POST /transferencias', () => {
         it('Must return 201 success if transfer is equal or greater than 10', async () => {
             //Capture Auth token
-            const responseLogin = await request('http://localhost:3000')
+            const responseLogin = await request(process.env.BASE_URL)
             .post('/login') //Endpoint method called
             .set('Content-Type','application/json') //Post header
             .send({ //Body of the Post
@@ -15,7 +16,7 @@ describe('Transferencias', () =>{
             
             const token = responseLogin.body.token;
 
-            const response = await request('http://localhost:3000')
+            const response = await request(process.env.BASE_URL)
             .post('/transferencias')
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${token}`)
@@ -32,7 +33,7 @@ describe('Transferencias', () =>{
 
         it('Must return 422 fail if transfer is smaller than 10', async () => {
              //Capture Auth token
-            const responseLogin = await request('http://localhost:3000')
+            const responseLogin = await request(process.env.BASE_URL)
             .post('/login') //Endpoint method called
             .set('Content-Type','application/json') //Post header
             .send({ //Body of the Post
@@ -42,7 +43,7 @@ describe('Transferencias', () =>{
             
             const token = responseLogin.body.token;
 
-            const response = await request('http://localhost:3000')
+            const response = await request(process.env.BASE_URL)
             .post('/transferencias')
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${token}`)
