@@ -5,9 +5,12 @@ const { getToken } = require('../helpers/autenticacao');
 
 describe('Transferencias', () =>{
     describe('POST /transferencias', () => {
-        it('Must return 201 success if transfer is equal or greater than 10', async () => {
-            const token = await getToken('julio.lima', '123456');
+        let token;
+        beforeEach(async () => {
+            token = await getToken('julio.lima', '123456');
+        })
 
+        it('Must return 201 success if transfer is equal or greater than 10', async () => {
             const response = await request(process.env.BASE_URL)
             .post('/transferencias')
             .set('Content-Type', 'application/json')
@@ -23,9 +26,7 @@ describe('Transferencias', () =>{
             console.log(response.body);
         });
 
-        it('Must return 422 fail if transfer is smaller than 10', async () => {
-            const token = await getToken('julio.lima', '123456');
-
+        it('Must return 422 fail if transfer is less than 10', async () => {
             const response = await request(process.env.BASE_URL)
             .post('/transferencias')
             .set('Content-Type', 'application/json')
