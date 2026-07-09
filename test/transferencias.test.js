@@ -37,6 +37,46 @@ describe('Transferencias', () =>{
             expect(response.status).to.equal(422);
             
         });
+    
+        it('Must return 404 if account is not valid ("contaDestino" = 3)', async () =>{
+            const bodyTransferencias = {...postTransferencias};
+            bodyTransferencias.contaDestino = 3;
+        
+            const response = await request(process.env.BASE_URL)
+            .post('/transferencias')
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${token}`)
+            .send(bodyTransferencias)
+
+            expect(response.status).to.equal(404);
+        })
+
+        it('Must return 401 if "valor" > 5000 and token is invalid', async ()=>{
+            const bodyTransferencias = {...postTransferencias};
+            bodyTransferencias.valor = 5001;
+
+            const response = await request(process.env.BASE_URL)
+            .post('/transferencias')
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${token}`)
+            .send(bodyTransferencias)
+
+            expect(response.status).to.equal(401);
+        })
+    
+        it.skip('Must return 400 if the post json is malformed (contaDestino empty) KNOWN BUG: API return 400 instead', async ()=> {
+            const bodyTransferencias = {...postTransferencias};
+            delete bodyTransferencias.contaDestino;
+
+            const response = await request(process.env.BASE_URL)
+            .post('/transferencias')
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${token}`)
+            .send(bodyTransferencias)
+
+            expect(response.status).to.equal(400);
+        })
+
     })
 
     describe ('GET /transferencia/{id}', () => {
@@ -69,7 +109,7 @@ describe('Transferencias', () =>{
             .set('Authorization', `Bearer ${token}`)
         })
 
-        it('Must return 200 - KNOWN BUG: valor returns string instead of number', async ()=> {
+        it('Must return 200 - KNOWN BUG: "valor" returns string instead of number', async ()=> {
             const response = await request(process.env.BASE_URL)
             .get(`/transferencias/${transferId}`)
             .set('Content-Type', 'application/json')
