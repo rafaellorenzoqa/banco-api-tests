@@ -54,6 +54,11 @@ Tests are executed with Mocha and the report is generated with Mochawesome at `m
 - Returns 200 with a valid token when given valid credentials.
 
 ### Transferencias
-- `POST /transferencias`: succeeds (201) for values >= 10 and fails (422) for values less than 10.
-- `GET /transferencias/{id}`: returns the transfer data matching the given id.
+- `POST /transferencias`:
+  - Succeeds (201) for values >= 10.
+  - Fails (422) for values less than 10.
+  - Fails (404) when the destination account is invalid.
+  - Fails (401) when the value exceeds 5000 and the token is invalid.
+  - _(skipped)_ Should return 400 for a malformed body (missing `contaDestino`) — currently returns a `KNOWN BUG` status from the API.
+- `GET /transferencias/{id}`: returns the transfer data matching the given id. _(`KNOWN BUG`: `valor` is returned as a string instead of a number)_
 - `GET /transferencias`: validates pagination (number of items per page).
