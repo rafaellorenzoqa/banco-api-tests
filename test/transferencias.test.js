@@ -11,6 +11,37 @@ describe('Transferencias', () =>{
     })
 
     describe('POST /transferencias', () => {
+        let transferId;
+        let postResponse
+
+        beforeEach(async () => { //Created to transfer large sums of money, capture the transferId and delete it to keep accounts with a healthy amount of money
+            const bodyTransferencias = {...postTransferencias};
+            bodyTransferencias.valor = 5001;
+            bodyTransferencias.token = '123456';
+
+            postResponse = await request(process.env.BASE_URL)
+            .post('/transferencias')
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${token}`)
+            .send(bodyTransferencias);
+
+            const getResponse = await request(process.env.BASE_URL)
+            .get('/transferencias?page=1&limit=1')
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${token}`)
+        
+            transferId = getResponse.body.transferencias[0].id;
+        })
+
+        afterEach(async () => {
+            await request(process.env.BASE_URL)
+            .delete(`/transferencias/${transferId}`)
+            .set('Authorization', `Bearer ${token}`);
+        })
+
+        it('Must return 201 created when transfer > 5000 and token is valid', async () =>{
+            expect(postResponse.status).to.equal(201);
+        })
 
         it('Must return 201 success if transfer is equal or greater than 10', async () => {
             const bodyTransferencias = {...postTransferencias}; //bodyTransferencias receives a copy of the postTranferencias JSON object
